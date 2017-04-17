@@ -1,0 +1,345 @@
+﻿
+@{
+    ViewBag.Title = "AddUser";
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+
+@using LandBClient.Core
+
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            @{ 
+                if (ViewData["EditUser"].ToString() == "Edit")
+                {
+                    <h2>Edit User</h2>
+                }
+                else
+                {
+                    <h2>Add User</h2>
+                }
+            }            
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="#">Settings 1</a>
+                        </li>
+                        <li>
+                            <a href="#">Settings 2</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="close-link"><i class="fa fa-close"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="x_content">
+            @using (Html.BeginForm("", "",FormMethod.Post, new { id="userform",@class = "form-horizontal form-label-left" }))
+            {
+                <div class="form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="full-name">
+                        Full Name <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        @Html.TextBox("FullName", null, new { @class = "form-control col-md-7 col-xs-12", placeholder = "Ex:Raviteja Swayampu" })
+                        <span id="spnFullName"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="gender">
+                        Gender <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        MALE:<input type="radio" class="flat" name="gender" id="genderM" value="Male" required />
+                        FEMALE:<input type="radio" class="flat" name="gender" id="genderF" value="Female" />
+                        <span id="spnGender"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="user-name">
+                        User Name <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        @Html.TextBox("UserName", null, new { @class = "form-control col-md-7 col-xs-12", placeholder = "Ex:ravi1234" })
+                        <span id="spnUserName"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="Password">
+                        Password <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        @Html.TextBox("Password", null, new { @class = "form-control col-md-7 col-xs-12", placeholder = "********" })
+                        <span id="spnPassword"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="role">
+                        Role <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <select id="ddlRole" name="ddlRole" class="form-control">
+                            <option selected="selected">-Choose role-</option>
+                            <option value="User">User</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                        <span id="spnddlRole"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">
+                        Email <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        @Html.TextBox("Email", null, new { @class = "form-control col-md-7 col-xs-12", placeholder = "Ex:ravi@gmail.com" })
+                        <span id="spnEmail"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="contact">
+                        Contact <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        @Html.TextBox("PhoneNumber", null, new { @class = "form-control col-md-7 col-xs-12", placeholder = "9074747458" })
+                        <span id="spnPhoneNumber"></span>
+                    </div>
+                </div>
+
+                <div class="ln_solid"></div>
+                <div class="form-group">
+                    <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                        <button id="btnCancel" onclick="Cancel();" class="btn btn-primary" type="button">Cancel</button>
+                        <button id="btnReset" onclick="Reset();" class="btn btn-primary" type="reset">Reset</button>
+                        @{
+                            if (ViewData["EditUser"].ToString() == "Edit")
+                            {
+                                <button id="btnEdit" onclick="saveEditUser();" type="button" class="btn btn-success">Update</button>
+                            }
+                            else
+                            {
+                                <button id="btnSubmit" onclick="AddUser();" type="button" class="btn btn-success">Submit</button>
+                            }
+                        }                        
+                    </div>
+                </div>
+                <input type="hidden" name="hdnIsEdit" id="hdnIsEdit" />
+                <input type="hidden" name="hdnUserID" id="hdnUserID" />
+            }
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {   
+        debugger;
+        //$("#genderM").attr('checked', true);
+        //$("#genderF").attr('checked', false);
+        @{
+            TUser editobj = new TUser();
+            if (ViewData["EditUserData"] != null)
+            {
+                editobj = ViewData["EditUserData"] as TUser;
+            }
+        }
+        if(@editobj.ID>0){
+            $("#hdnUserID").val(@editobj.ID);
+            $("#FullName").val('@editobj.Name');
+            $("#UserName").val('@editobj.UserName');
+            $("#Password").val('@editobj.Password');
+            $("#Email").val('@editobj.EmailAddress');
+            $("#ddlRole").val('@editobj.Role');
+            var gender = '@editobj.Gender';
+            if (gender=="Male") {
+                $("#genderM").attr('checked', true);
+            }
+            if (gender == "Female") {
+                $("#genderF").attr('checked', true);
+            }
+            $("#PhoneNumber").val('@editobj.PhoneNumber');
+        }
+    });
+
+    function AddUser() {
+        debugger;
+        if (ValidateForm()) {
+            $("#hdnIsEdit").val("Add");
+            var url = "@Url.Action("AddUser", "Admin")";
+            var dataToBeSent = $('form').serialize();
+            $.post(url, dataToBeSent, function (data) {
+                if (data.toLowerCase() == "true") {
+                    swal({
+                        title: "",
+                        text: "User added Successfully",
+                        type: "success",
+                    },
+                    function (isConfirm) {
+                        document.forms[0].action = "@Url.Action("ManageUsers", "Admin")";
+                        document.forms[0].submit();
+                    });
+                }
+                else {
+                    swal({
+                        title: "",
+                        text: "Error: User not added",
+                        type: "error",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+    }
+
+    function saveEditUser() {
+        if (ValidateForm()) {
+            debugger;
+            $("#hdnIsEdit").val("Edit");
+            var url = "@Url.Action("AddUser", "Admin")";
+            var dataToBeSent = $('form').serialize();
+            $.post(url, dataToBeSent, function (data) {
+                if (data.toLowerCase() == "true") {
+                    swal({
+                        title: "",
+                        text: "User data has been Updated",
+                        type: "success",
+                    },
+                    function (isConfirm) {
+                        document.forms[0].action = "@Url.Action("ManageUsers", "Admin")";
+                        document.forms[0].submit();
+                    });
+                }
+                else {
+                    swal({
+                        title: "",
+                        text: "Error: User data not updated",
+                        type: "error",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+    }
+
+    function Cancel() {
+        document.forms[0].action = "@Url.Action("ManageUsers","Admin")";
+        document.forms[0].submit();
+    }
+
+    function Reset() {
+        $("#FullName").val("");
+        $("#UserName").val("");
+        $("#Password").val("");
+        $("#Email").val("");
+        $("#ddlRole").val("");
+        $("#PhoneNumber").val("");
+    }
+
+        $("#FullName").change(function () {
+            if ($("#FullName").val() != "") {
+                $("#spnFullName").html("");
+        }
+    });
+        $("#UserName").change(function () {
+            if ($("#UserName").val() != "") {
+                $("#spnUserName").html("");
+        }
+    });
+        $("#Password").change(function () {
+            if ($("#Password").val() != "") {
+                $("#spnPassword").html("");
+        }
+    });
+        $("#Email").change(function () {
+            if ($("#Email").val() != "") {
+                $("#spnEmail").html("");
+        }
+    });
+        $("#ddlRole").change(function () {
+            if ($("#ddlRole").val() != "-Choose role-") {
+                $("#spnddlRole").html("");
+        }
+    });
+        $("#PhoneNumber").change(function () {
+            if ($("#PhoneNumber").val() != "") {
+                $("#spnPhoneNumber").html("");
+            }
+        });
+        //if ($("#genderM").attr('checked', true)) {
+        //    debugger;
+        //    $("#spnGender").html("");
+        //}
+        //if ($("#genderF").attr('checked', true)) {
+        //    debugger;
+        //    $("#spnGender").html("");
+        //}
+
+        function ValidateForm(){
+            debugger;
+        var result = true;
+        var emailReg = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/gi;
+
+        if ($.trim($("#FullName").val()) == "") {
+            $("#spnFullName").html("<p style='color:red;'>Enter Full Name</p>");
+            result = false;
+        }
+        if ($.trim($("#UserName").val()) == "") {
+            $("#spnUserName").html("<p style='color:red;'>Enter User Name</p>");
+            result = false;
+        }
+        if ($("#genderM").val()=="") {
+            $("#spnGender").html("<p style='color:red;'>Select Gender</p>");
+            result = false;
+        }
+        if ($("#genderF").val()=="") {
+            $("#spnGender").html("<p style='color:red;'>Select Gender</p>");
+            result = false;
+        }
+        if ($.trim($("#PhoneNumber").val()) == "") {
+            $("#spnPhoneNumber").html("<p style='color:red;'>Enter PhoneNumber</p>");
+            result = false;
+        }
+        else if (isNaN($("#PhoneNumber").val()) == true) {
+            $("#spnPhoneNumber").html("<p style='color:red;'>Enter Valid PhoneNumber</p>");
+            result = false;
+        }
+        else if ($("#PhoneNumber").val().length != 10) {
+            $("#spnPhoneNumber").html("<p style='color:red'>Number must be 10 digits</p>");
+            result = false;
+        }
+        if ($.trim($("#Email").val()) == "") {
+            $("#spnEmail").html("<p style='color:red;'>Enter EmailID</p>");
+            result = false;
+        }
+        else if (!emailReg.test($("#Email").val())) {
+            $("#spnEmail").html("<p style='color:red'>Enter Valid Email</p>");
+            result = false;
+        }
+        if ($("#ddlRole").val() == "-Choose role-") {
+            $("#spnddlRole").html("<p style='color:red;'>Please select one Role</p>");
+            result = false;
+        }
+        if ($.trim($("#Password").val()) == "") {
+            $("#spnPassword").html("<p style='color:red;'>Password cannot be null</p>");
+            result = false;
+        }
+        return result;
+    }
+
+</script>
+

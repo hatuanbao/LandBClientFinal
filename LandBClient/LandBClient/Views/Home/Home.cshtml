@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<style type="text/css">
+    #icons:hover{
+        box-shadow:3px 3px 3px 3px #10cbed;
+    }
+</style>
+
+<div class="row" style="margin-top:20px;">
+    <div id="icons" class="col-md-2">
+        <div class="thumbnail">
+            <a href="@Url.Action("LeadLookUp","Lead")">
+                <img src="~/Content/LandBTheme/Images/Newcustomer.png" alt="NewCustomer"/>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div id="icons" class="thumbnail">
+            <a href="@Url.Action("VisitedLeadLookup","Lead")">
+                <img src="~/Content/LandBTheme/Images/visitedicon.png" alt="VisitedCustomer" />
+            </a>
+        </div>
+    </div>
+</div>
+

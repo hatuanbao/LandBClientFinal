@@ -1,0 +1,361 @@
+﻿
+@{
+    ViewBag.Title = "AddorEditLeadLookUp";
+}
+@using LandBClient.Core
+
+
+<!--Edit Form Starts here-->
+    <div style="margin-top:20px;">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    @{
+                        if (ViewData["AddorEdit"].ToString() == "Add")
+                        {
+                            <h2 class="text-info">Add Lead</h2>}
+                        else {
+                            <h2 class="text-info"> Edit Lead</h2>}
+                    }
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Settings 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Settings 2</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div id="formDisplay">
+                        @using (Html.BeginForm("", "", FormMethod.Post, new { @class = "form-horizontal", id = "AddorEditForm" }))
+            {
+                            <div class="form-group">
+                                @Html.Label("First Name:", new { @class = "control-label col-sm-2" })
+                                <div class="col-sm-10">
+                                    @Html.TextBox("FirstName", null, new { @class = "form-control", placeholder = "Ex:Raviteja" })
+                                    <span id="spnFirstName"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Last Name:", new { @class = "control-label col-sm-2" })
+                                <div class="col-sm-10">
+                                    @Html.TextBox("LastName", null, new { @class = "form-control", placeholder = "sr name" })
+                                    <span id="spnLastName"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Phone Number", new { @class = "control-label col-sm-2" })
+                                <div class="col-sm-10">
+                                    @Html.TextBox("PhoneNumer", null, new { @class = "form-control", placeholder = "Ex:9052567697" })
+                                    <span id="spnPhoneNumer"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Email", new { @class = "control-label col-sm-2" })
+                                <div class="col-sm-4">
+                                    @Html.TextBox("EmailID", null, new { @class = "form-control", placeholder = "Ex:raviswayampu@gmail.com" })
+                                    <span id="spnEmailID"></span>
+                                </div>                
+                                <label class="col-sm-2">Upload Excel data</label>
+                                <input type="file" class="form-control col-sm-4" id="CustomerExcelData" name="CustomerExcelData" />
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("IsVisited", new { @class = "control-label col-sm-2" })
+                                <div class="col-sm-10">
+                                    <select id="ddlIsVisited" name="ddlIsVisited" class="form-control">
+                                        <option selected="selected">--select--</option>
+                                        <option value="yes">YES</option>
+                                        <option value="no">NO</option>
+                                    </select>
+                                    <span id="spnddlIsVisited"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Status", new { @class = "control-label col-sm-2" })
+                                <div class="col-sm-10">
+                                    @Html.TextArea("Status", null, new { @class = "form-control", placeholder = "Write about status of the Lead in in few words" })
+                                    <span id="spnStatus"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Lead Source", new { @class = "control-label col-sm-2" })
+                                
+                                <div class="col-sm-10">
+                                    <select id="ddlLeadSource" name="ddlLeadSource" class="form-control">
+                                        <option selected="selected">-Select Lead Source-</option>
+                                        <option value="From News paper Ad">From News paper Ad</option>
+                                        <option value="Through Friend">Through Friend</option>
+                                        <option value="Through Broucher">Through Broucher</option>
+                                        <option value="Through Property website">Through Property website</option>
+                                        <option value="Through Banners">Through Banners</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                    <span id="spnddlLeadSource"></span>
+
+                                </div>
+                            </div>
+                            <div id="txtLeadDisplay" class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <input type="text" id="txtLeadSource" class="form-control" placeholder="Enter some source" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    @{ if (ViewData["AddorEdit"].ToString() == "Add")
+                                        {
+                                            <input class="btn btn-info" id="btnAddSubmit" onclick="AddNewLead();" type="button" value="Add Lead" />
+                                            <button type="button" id="btnAddCancel" onclick="AddNewCancel();" class="btn btn-danger">Cancel</button>
+                                        }
+                                        else
+                                        {
+                                            <input class="btn btn-info" id="btnEditSubmit" onclick="saveEditData();" type="button" value="Edit" />
+                                            <button type="button" id="btnEditCancel" onclick="EditCancel();" class="btn btn-danger">Cancel</button>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <input type="hidden" id="hdnCustomerID" name="hdnCustomerID" />
+                            <input type="hidden" id="hdnOtherLeadSource" name="hdnOtherLeadSource" />
+                                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--Edit Form Ends here-->
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ('@ViewData["AddorEdit"].ToString()' == "Add"){
+            $("#txtLeadDisplay").hide();
+        }
+        if ('@ViewData["AddorEdit"].ToString()' == "Edit") {
+            if ($("#txtLeadSource").val() == "") {
+                $("#txtLeadDisplay").hide();
+            }
+        }
+    });
+
+    @{
+        //List<Customer> editlst = new List<Customer>();
+        Customer editobj = new Customer();
+        string isVisited = null;
+        if (ViewData["EditCustomerData"] != null && ViewData.Count>0)
+        {
+            editobj = ViewData["EditCustomerData"] as Customer;
+        }
+        if (ViewData["IsVisited"] != null)
+        {
+            isVisited = ViewData["IsVisited"].ToString();
+        }
+     }
+    //Bind edit data to form...
+    var addoredit='@ViewData["AddorEdit"].ToString()';
+    var isvisited = '@isVisited';
+    debugger;
+    if(addoredit=="Edit"){
+        $("#hdnCustomerID").val(@editobj.CustomerID);
+        $("#FirstName").val('@editobj.FirstName');
+        $("#LastName").val('@editobj.LastName');
+        $("#PhoneNumer").val('@editobj.PhoneNumber');
+        $("#EmailID").val('@editobj.EmailID');
+        $("#ddlIsVisited").val('@editobj.IsVisited');
+
+        $("#Status").val('@editobj.Status');
+        $("#ddlLeadSource").val('@editobj.LeadSource');
+        var leadsource = '@editobj.LeadSource';
+        leadsource = leadsource.toLowerCase();
+        if (leadsource== "other") {
+            $("#txtLeadDisplay").show();
+            $("#txtLeadSource").val('@editobj.OtherReason');
+        }
+    }
+    function AddNewLead() {
+        if (ValidateForm()) {
+            var url = "@Url.Action("AddLead","Lead")";
+            $("#hdnOtherLeadSource").val($("#txtLeadSource").val());
+            var dataToBeSent = $('form').serialize();
+            $.post(url, dataToBeSent, function (data) {
+                if (data.toLowerCase() == "true") {
+
+                    swal({
+                        title: "",
+                        text: "New Customer has added",
+                        type: "success"
+                    },
+                       function (isConfirm) {
+                           document.forms[0].action = "@Url.Action("LeadLookUp","Lead")";
+                           document.forms[0].submit();
+                       });
+
+                }
+                else {
+                    alert("Error: Data not saved try again");
+                    swal({
+                        title: "",
+                        text: "Error: Data not saved try again",
+                        type: "error"
+                    });
+                }
+            });
+        }
+    }
+
+    function AddNewCancel() {
+        document.forms[0].action = "@Url.Action("LeadLookUp","Lead")";
+        document.forms[0].submit();
+    }
+
+    function saveEditData() {
+        if (ValidateForm()) {
+            var url = "@Url.Action("SaveLead", "Lead")";
+            $("#hdnOtherLeadSource").val($("#txtLeadSource").val());
+            var dataToBeSent = $('form').serialize();
+            $.post(url, dataToBeSent, function (data) {
+                if (data.toLowerCase() == "true") {
+                    //alert("Data Updated Successfully");
+                    swal({
+                        title: "",
+                        text: "Data Updated Successfully!",
+                        type: "success"
+                    },
+                       function (isConfirm) {
+                           if (isvisited == "YES") {
+                               document.forms[0].action = "@Url.Action("VisitedLeadLookup", "Lead")";
+                               document.forms[0].submit();
+                           }
+                           else {
+                               document.forms[0].action = "@Url.Action("LeadLookUp","Lead")";
+                               document.forms[0].submit();
+                           }
+                       });
+                }
+                else {
+                    alert("Error: Data not updated!");
+                    swal({
+                        title: "",
+                        text: "Error:Data not updated",
+                        type: "error"
+                    });
+                }
+            });
+        }
+    }
+
+    function EditCancel() {
+        debugger;
+        if (isvisited == "YES") {
+            document.forms[0].action = "@Url.Action("VisitedLeadLookup", "Lead")";
+            document.forms[0].submit();
+        }
+        else {
+            document.forms[0].action = "@Url.Action("LeadLookUp","Lead")";
+            document.forms[0].submit();
+        }
+    }
+
+    //Form validation using jquery validation plugin...
+    $("#FirstName").change(function () {
+        if ($("#FirstName").val() != "") {
+            $("#spnFirstName").html("");
+        }
+    });
+    $("#LastName").change(function () {
+        if ($("#LastName").val() != "") {
+            $("#spnLastName").html("");
+        }
+    });
+    $("#PhoneNumer").change(function () {
+        if ($("#PhoneNumer").val() != "") {
+               $("#spnPhoneNumer").html("");
+            }
+    });
+    $("#EmailID").change(function () {
+        if ($("#EmailID").val() != "") {
+              $("#spnEmailID").html("");
+           }
+    });
+    $("#ddlIsVisited").change(function () {
+        if ($("#ddlIsVisited").val() != "--select--") {
+            $("#spnddlIsVisited").html("");
+        }
+    });
+    $("#Status").change(function () {
+        if ($("#Status").val() != "") {
+            $("#spnStatus").html("");
+        }
+    });
+    $("#ddlLeadSource").change(function () {
+        if ($("#ddlLeadSource").val() != "-Select Lead Source-") {
+            $("#spnddlLeadSource").html("");
+        }
+        if ($("#ddlLeadSource").val() == "other") {
+            $("#txtLeadDisplay").show();
+        }
+    });
+
+    function ValidateForm() {
+        var result = true;
+        var emailReg = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/gi;
+
+        if ($.trim($("#FirstName").val()) == "") {
+            $("#spnFirstName").html("<p style='color:red;'>Enter First Name</p>");
+            result = false;
+        }
+        if ($.trim($("#LastName").val()) == "") {
+            $("#spnLastName").html("<p style='color:red;'>Enter Last Name</p>");
+            result = false;
+        }
+        if ($.trim($("#PhoneNumer").val()) == "") {
+            $("#spnPhoneNumer").html("<p style='color:red;'>Enter PhoneNumer</p>");
+            result = false;
+        }
+        else if (isNaN($("#PhoneNumer").val()) == true) {
+            $("#spnPhoneNumer").html("<p style='color:red;'>Enter Valid PhoneNumer</p>");
+            result=false;
+        }
+        else if ($("#PhoneNumer").val().length != 10) {
+            $("#spnPhoneNumer").html("<p style='color:red'>Number must be 10 digits</p>");
+            result=false;
+        }
+        if ($.trim($("#EmailID").val()) == "") {
+            $("#spnEmailID").html("<p style='color:red;'>Enter EmailID</p>");
+            result = false;
+        }
+        else if (!emailReg.test($("#EmailID").val())) {
+            $("#spnEmailID").html("<p style='color:red'>Enter Valid Email</p>");
+            result = false;
+        }
+        if ($("#ddlIsVisited").val() == "--select--") {
+            $("#spnddlIsVisited").html("<p style='color:red;'>Please select one</p>");
+            result = false;
+        }
+        if ($.trim($("#Status").val()) == "") {
+            $("#spnStatus").html("<p style='color:red;'>Status cannot be null</p>");
+            result = false;
+        }
+        if ($.trim($("#ddlLeadSource").val()) == "-Select Lead Source-") {
+            $("#spnddlLeadSource").html("<p style='color:red;'>Select Lead Source</p>");
+            result = false;
+        }
+        if ($("#ddlLeadSource").val() == "other") {
+            if ($("#txtLeadSource").val() == "") {
+                $("#spnddlLeadSource").html("<p style='color:red;'>Enter some Source</p>");
+                result= false;
+            }
+        }
+        return result;
+    }
+</script>

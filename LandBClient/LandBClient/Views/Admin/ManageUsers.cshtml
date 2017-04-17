@@ -1,0 +1,148 @@
+﻿
+@{
+    ViewBag.Title = "Manage Users";
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+@model IEnumerable<LandBClient.Core.TUser>
+
+<style>
+    tr.even {
+        background-color: #F5F5F5 !important;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function (){
+        $('#tblUserlist').DataTable({
+            dom: "Bfrtip",//display buttons
+            //desiable sorting for column by specifying index order
+            'columnDefs': [
+					{ orderable: false, targets: [2,3,6] }
+            ],
+            //buttons
+            buttons: [
+						{
+						    extend: "copy",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "csv",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "excel",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "pdfHtml5",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "print",
+						    className: "btn-sm"
+						},
+            ],
+            //responsive: true,
+            "pageLength": 10,
+            "pagingType": "full_numbers"
+        });
+    });
+</script>
+
+<div class="col-md-12 col-sm-12 col-xs-12">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { id = "form1", name = "form1" }))
+    {
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Manage Users</h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="#">Settings 1</a>
+                        </li>
+                        <li>
+                            <a href="#">Settings 2</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="close-link"><i class="fa fa-close"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <table id="tblUserlist" class="table table-bordered table-responsive" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="70px">Full Name</th>
+                        <th>User Name</th>
+                        <th>Password</th>
+                        <th>Role</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var item in Model)
+                        {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.UserName</td>
+                        <td>@item.Password</td>
+                        <td>@item.Role</td>
+                        <td>@item.EmailAddress</td>
+                        <td>@item.PhoneNumber</td>
+                        <td><a href="#" class="btn btn-info" onclick="EditUser(@item.ID);">Edit</a><a href="#" class="btn btn-danger" onclick="Delete(@item.ID);">Delete</a></td>
+                    </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--Hidden Elements-->
+    <input type="hidden" name="hdnUserid" id="hdnUserid" />
+   }
+</div>
+
+<script type="text/javascript">
+    function EditUser(id) {
+        $("#hdnUserid").val(id);
+        document.forms[0].action = "@Url.Action("EditUser", "Admin")";
+        document.forms[0].submit();
+    }
+    function Delete(id) {
+        var url = "@Url.Action("DeleteUser", "Admin")";        
+        $.post(url, {userid:id}, function (data) {
+            if (data.toLowerCase() == "true") {
+                swal({
+                    title: "",
+                    text: "User have been Deleted",
+                    type: "success",
+                },
+                function (isConfirm) {
+                    document.forms[0].action = "@Url.Action("ManageUsers", "Admin")";
+                    document.forms[0].submit();
+                });
+            }
+            else {
+                swal({
+                    title: "",
+                    text: "Error: User record not deleted",
+                    type: "error",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        });
+    }
+</script>
+

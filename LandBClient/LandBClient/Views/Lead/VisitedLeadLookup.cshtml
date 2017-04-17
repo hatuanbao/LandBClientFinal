@@ -1,0 +1,216 @@
+﻿
+@{
+    ViewBag.Title = "VisitedLeadLookup";
+}
+
+@model IEnumerable<LandBClient.Core.Customer>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tblVisitedCustomerlist').DataTable({
+        dom: "Bfrtip",//display buttons
+        //desiable sorting for column by specifying index order
+        'columnDefs': [
+                { orderable: false, targets: [2, 3, 6] }
+        ],
+        select:true,
+        //buttons
+        buttons: [
+                    {
+                        extend: "copy",
+                        className: "btn-sm"
+                    },
+                    {
+                        extend: "csv",
+                        className: "btn-sm"
+                    },
+                    {
+                        extend: "excel",
+                        className: "btn-sm"
+                    },
+                    {
+                        extend: "pdfHtml5",
+                        className: "btn-sm"
+                    },
+                    {
+                        extend: "print",
+                        className: "btn-sm"
+                    },
+        ],
+        responsive: true,
+        "pageLength": 10,
+        "pagingType": "full_numbers"
+    });
+  });
+</script>
+
+<div style="margin-top:20px;">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        @using (Html.BeginForm("", "", FormMethod.Post, new { id = "form1", name = "form1" }))
+        {
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Visited Customers List</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Settings 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Settings 2</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <p>This grid contains data who visited the site</p>
+                    <table id="tblVisitedCustomerlist" class="table table-bordered table-responsive" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th width="70px">First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>LeadSource</th>
+                                <th>Contact</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.FirstName</td>
+                                        <td>@item.LastName</td>
+                                        <td>@item.EmailID</td>
+                                        <td>@item.Status</td>
+                                        @{
+                                            if (item.LeadSource.ToLower() == "other")
+                                            {
+                                                <td>@item.OtherReason</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@item.LeadSource</td>
+                                            }
+                                        }
+                                        <td>@item.PhoneNumber</td>
+                                        <td><a href="#" class="btn btn-info" onclick="ajaxLinkCall(@item.CustomerID,'Edit');">Edit</a><a href="#" class="btn btn-danger" onclick="ajaxLinkCall(@item.CustomerID,'Delete');">Delete</a></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    <!--Hidden Elements-->
+                                <input type="hidden" id="hdnCustomerID" name="hdnCustomerID" />
+                                <input type="hidden" id="hdnIsVisited" name="hdnIsVisited" />
+                                }
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    //var imGPath = "/Content/LandBTheme/Images";
+
+    //    //Visited Customer Grid...
+    //    $("#VisitedCustomerGrid").jqGrid({
+    //        url: "/Lead/jqCustomerList",
+    //        mtype: "GET",
+    //        datatype: "json",
+    //        colNames: ['CustomerID', 'FirstName', 'LastName', 'PhoneNumber', 'EmailId', 'IsVisited', 'Status','LeadSource','Actions'],
+    //        colModel: [
+    //            { label: 'CustomerID', name: 'CustomerID', key: true, width: 75, hidden: true },
+    //            { label: 'FirstName', name: 'FirstName', width: 150, align: 'center' },
+    //            { label: 'LastName', name: 'LastName', width: 150, align: 'center' },
+    //            { label: 'PhoneNumber', name: 'PhoneNumber', width: 150, align: 'center' },
+    //            { label: 'EmailID', name: 'EmailID', width: 200, sortable: false, align: 'center' },
+    //            { label: 'IsVisited', name: 'IsVisited', width: 70, sortable: false, align: 'center', hidden: true },
+    //            { label: 'Status', name: 'Status', width: 200, sortable: false, align: 'center' },
+    //            { label: 'LeadSource', name: 'LeadSource', sortable: false, align: 'center' },
+    //            { label: 'Actions', name: 'Actions', sortable: false, align: 'center', formatter: customEditFormatter }
+    //        ],
+    //        viewrecords: true,
+    //        width: 1100,
+    //        height: 'auto',
+    //        postData: {
+    //            gridtype: "VisitedCustomerGrid"
+    //        },
+    //        rowNum: 25,
+    //        pager: "#VisitedCustomerGridPager"
+    //    });
+
+    //    function customEditFormatter(cellValue, options, rowObject) {
+    //        var Id = rowObject;//gets all row data
+    //        var part = "";
+    //        part = "<a onclick=\"ajaxLinkCall('" + Id.CustomerID + "','Delete');\" href='#' ><img title='Delete Customer' alt='Delete' src='" + imGPath + "/Delete.png'/></a>";
+    //        part = "<a onclick=\"ajaxLinkCall('" + Id.CustomerID + "','Edit');\" href='#' ><img title='Edit Customer' alt='Edit' src='" + imGPath + "/Edit.png'/></a>" + part;
+    //        return part;
+    //    }
+        //performs Edit and delete operations..
+        function ajaxLinkCall(id, type) {
+            debugger;
+            var CustomerId = parseInt(id);
+            if (type == "Edit") {
+                $("#hdnCustomerID").val(CustomerId);
+                $("#hdnIsVisited").val("YES");
+                document.forms[0].action = "@Url.Action("EditLeadLookup","Lead")";
+                document.forms[0].submit();
+            }
+            if (type == "Delete") {
+                swal({
+                    title: "Are you sure?",
+                    text: "You will not be able to recover file!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, cancel plx!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        var url = "@Url.Action("DeleteLead", "Lead")";
+                        $.post(url, { CustomerID: CustomerId }, function (data) {
+                            if (data.toLowerCase() == 'true') {
+                                swal({
+                                    title: "",
+                                    text: "Your file deleted successfully!",
+                                    type: "success"
+                                },
+                                function (isConfirm) {
+                                    document.forms[0].action = "@Url.Action("VisitedLeadLookup", "Lead")";
+                                    document.forms[0].submit();
+                                });
+
+                            }
+                            else {
+                                swal("", "Your imaginary file not deleted :)", "error");
+                            }
+                        });
+                    }
+                    else {
+                        $('.showSweetAlert').hide();
+                        $('.sweet-overlay').hide();
+                        //document.getElementsByClassName("showSweetAlert").
+                    }
+                });
+            }
+        }
+</script>
+
+

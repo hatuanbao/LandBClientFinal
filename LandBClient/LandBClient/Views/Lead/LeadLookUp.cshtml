@@ -1,0 +1,200 @@
+﻿
+@{
+    ViewBag.Title = "LeadLookUp";
+}
+@model IEnumerable<LandBClient.Core.Customer>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+    $('#tblNewCustomerlist').DataTable({
+        dom: "Bfrtip",//display buttons
+        //desiable sorting for column by specifying index order
+        'columnDefs': [
+                { orderable: false, targets: [2, 3, 6] }
+        ],
+        select:true,
+        //buttons
+        buttons: [
+                    {
+                        extend: "copy",
+                        className: "btn-sm"
+                    },
+                    {
+                        extend: "csv",
+                        className: "btn-sm"
+                    },
+                    {
+                        extend: "excel",
+                        className: "btn-sm"
+                    },
+                    {
+                        extend: "pdfHtml5",
+                        className: "btn-sm"
+                    },
+                    {
+                        extend: "print",
+                        className: "btn-sm"
+                    },
+        ],
+        responsive: true,
+        "pageLength": 10,
+        "pagingType": "full_numbers"
+    });
+  });
+</script>
+
+<div style="margin-top:20px;">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        @using (Html.BeginForm("", "", FormMethod.Post, new { id = "form1", name = "form1" }))
+        {
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Customers List</h2>               
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#">Settings 1</a>
+                                </li>
+                                <li>
+                                    <a href="#">Settings 2</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <p>This grid contains the new customer data who do not visited location</p>
+                    <table id="tblNewCustomerlist" class="table table-bordered table-responsive" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th width="70px">First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>LeadSource</th>
+                                <th>Contact</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.FirstName</td>
+                                        <td>@item.LastName</td>
+                                        <td>@item.EmailID</td>
+                                        <td>@item.Status</td>
+                                        @{ 
+                                            if (item.LeadSource.ToLower() == "other")
+                                            {
+                                                <td>@item.OtherReason</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@item.LeadSource</td>
+                                            }
+                                        }
+                                        
+                                        <td>@item.PhoneNumber</td>
+                                        <td><a href="#" class="btn btn-default" onclick="ajaxLinkCall(@item.CustomerID,'Visited');">Visited</a><a href="#" class="btn btn-info" onclick="ajaxLinkCall(@item.CustomerID,'Edit');">Edit</a><a href="#" class="btn btn-danger" onclick="ajaxLinkCall(@item.CustomerID,'Delete');">Delete</a></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    <!--Hidden Elements-->
+                                <input type="hidden" id="hdnCustomerID" name="hdnCustomerID" />
+                                }
+    </div>
+</div>
+
+<script type="text/javascript">
+
+        //performs Edit and delete operations..
+        function ajaxLinkCall(id, type) {
+            var CustomerId = parseInt(id);
+            if (type == "Edit") {
+                $("#hdnCustomerID").val(CustomerId);
+                document.forms[0].action = "@Url.Action("EditLeadLookup","Lead")";
+                document.forms[0].submit();
+            }
+            if(type=="Visited"){
+                var url = "@Url.Action("moveToVisited", "Lead")";
+                $.post(url, { ID: CustomerId }, function (data) {
+                    if (data.toLowerCase() == 'true') {
+                        swal({
+                            title: "",
+                            text: "Customer record moved to Visited List!",
+                            type: "success"
+                        },
+                        function (isConfirm) {
+                            document.forms[0].action = "@Url.Action("LeadLookUp","Lead")";
+                            document.forms[0].submit();
+                        });
+
+                    }
+                    else {
+                        swal({
+                            title: "",
+                            text: "record not moved to Visited List",
+                            type: "error",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            }
+            if (type == "Delete") {
+                swal({
+                    title: "Are you sure?",
+                    text: "You will not be able to recover file!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, cancel plx!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        var url = "@Url.Action("DeleteLead", "Lead")";
+                        $.post(url, { CustomerID: CustomerId }, function (data) {
+                            if (data.toLowerCase() == 'true') {
+                                swal({
+                                    title: "",
+                                    text: "Your file deleted successfully!",
+                                    type: "success"
+                                },
+                                function (isConfirm) {
+                                    document.forms[0].action = "@Url.Action("LeadLookUp","Lead")";
+                                    document.forms[0].submit();
+                                });
+
+                            }
+                            else {
+                                swal("", "Your imaginary file not deleted :)", "error");
+                            }
+                        });
+                    }
+                    else {
+                        $('.showSweetAlert').hide();
+                        $('.sweet-overlay').hide();
+                        //document.getElementsByClassName("showSweetAlert").
+                    }
+                });
+            }
+        }
+</script>

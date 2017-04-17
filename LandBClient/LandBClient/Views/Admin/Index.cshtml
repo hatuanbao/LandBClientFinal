@@ -1,0 +1,340 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+@model LandBClient.Models.AdminHomeViewModel
+
+<style>
+    tr.even {
+        background-color: #F5F5F5 !important;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tblcustomerslist').DataTable({
+            "processing": true, // for show progress bar
+            "filter": true, // this is for disable filter (search box)
+
+            //disable sorting for column by specifying index order
+            'columnDefs': [
+					{ orderable: false, targets: [4, 5, 6,7] }
+            ],
+            dom: "Bfrtip",//display buttons
+            //buttons
+            buttons: [
+						{
+						    extend: "copy",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "csv",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "excel",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "pdfHtml5",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "print",
+						    className: "btn-sm"
+						},
+            ],
+            "pageLength": 10,
+            "pagingType": "full_numbers"
+           // responsive: true
+        });
+
+        $('#tbldelcustomerslist').DataTable({
+            "processing": true, // for show progress bar
+            "filter": true, // this is for disable filter (search box)
+            //"orderMulti": true, // for disable multiple column at once
+
+            //disable sorting for column by specifying index order
+            'columnDefs': [
+					{ orderable: false, targets: [4, 5, 6, 8] }
+            ],
+            dom: "Bfrtip",//display buttons
+            //buttons
+            buttons: [
+						{
+						    extend: "copy",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "csv",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "excel",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "pdfHtml5",
+						    className: "btn-sm"
+						},
+						{
+						    extend: "print",
+						    className: "btn-sm"
+						},
+            ],
+            "pageLength": 10,
+            "pagingType": "full_numbers"
+            //responsive: true
+        });
+        
+    });
+
+
+</script>
+
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>All Customer List</h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+                <li>
+                    <a class="close-link"><i class="fa fa-close"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <table id="tblcustomerslist" class="table table-bordered table-responsive" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email Address</th>
+                        <th>Phone Number</th>
+                        <th>IsVisited</th>
+                        <th>Status</th>
+                        <th>Lead Source</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var item in Model.CustomerData)
+                        {
+                            <tr>
+                                <td>@item.FirstName</td>
+                                <td>@item.LastName</td>
+                                <td>@item.EmailID</td>
+                                <td>@item.PhoneNumber</td>
+                                <td>@item.IsVisited</td>
+                                <td>@item.Status</td>
+                                @*<td>@item.LeadSource</td>*@
+                                @{
+                                    if (item.LeadSource.ToLower() == "other")
+                                    {
+                                        <td>@item.OtherReason</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@item.LeadSource</td>
+                                    }
+                                }
+                                @*<td>@Html.ActionLink("Edit","EditCustomer","Admin",new { item.CustomerID,@class="btn btn-info"})</td>*@
+                                <td><a href="#" class="btn btn-danger" onclick="Delete(@item.CustomerID,'customerTable');">Delete</a></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            </div>
+        </div>
+</div>
+
+<!--Deleted Customers list-->
+
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Deleted Customers</h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+                <li>
+                    <a class="close-link"><i class="fa fa-close"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <table id="tbldelcustomerslist" class="table table-bordered table-responsive" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email Address</th>
+                        <th>Phone Number</th>
+                        <th>IsVisited</th>
+                        <th>Status</th>
+                        <th>Lead Source</th>
+                        <th>Deleted By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var item in Model.DeletedCustomerData)
+                        {
+                            <tr>
+                                <td>@item.FirstName</td>
+                                <td>@item.LastName</td>
+                                <td>@item.EmailID</td>
+                                <td>@item.PhoneNumber</td>
+                                <td>@item.IsVisited</td>
+                                <td>@item.Status</td>
+                                @*<td>@item.LeadSource</td>*@
+                                @{
+                                    if (item.LeadSource.ToLower() == "other")
+                                    {
+                                        <td>@item.OtherReason</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@item.LeadSource</td>
+                                    }
+                                }
+                                <td>@item.DeletedBy</td>
+                                @*<td>@Html.ActionLink("Edit", "EditCustomer", "Admin", new { item.ID, @class = "btn btn-info" })</td>*@
+                                <td><a href="#" class="btn btn-info" onclick="UnDelete(@item.ID);">UnDelete</a><a href="#" class="btn btn-danger" onclick="Delete(@item.ID,'delTable');">Delete</a></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function Delete(id,tableType) {
+        swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover file!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel plx!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            if (tableType == "customerTable") {
+                                var customerid = id;
+                                var url = "@Url.Action("DeleteCustomer", "Admin")";
+                                $.post(url, { CustomerID: customerid }, function (data) {
+                                    if (data.toLowerCase() == 'true') {
+                                        swal({
+                                            title: "",
+                                            text: "Your Customer Record deleted!",
+                                            type: "success",
+                                        },
+                                        function (isConfirm) {
+                                            if (isConfirm) {
+                                                window.location.reload();
+                                            }
+                                        });
+
+                                    }
+                                    else {
+                                        swal("", "Your file not deleted :)", "error");
+                                    }
+                                });
+                            }
+                            else {
+                                //deletes the DelTable Record..
+                                debugger;
+                                var customerid = id;
+                                var url = "@Url.Action("DeleteCustomerFromDelTable", "Admin")";
+                                $.post(url, { ID: customerid }, function (data) {
+                                    if (data.toLowerCase() == 'true') {
+                                        swal({
+                                            title: "",
+                                            text: "Record deleted Successfully!",
+                                            type: "success",
+                                        },
+                                        function (isConfirm) {
+                                            if (isConfirm) {
+                                                window.location.reload();
+                                            }
+                                        });
+
+                                    }
+                                    else {
+                                        swal("", "Your record not deleted :)", "error");
+                                    }
+                                });
+                            }
+                        }
+                        else {
+                            swal({
+                                title: "",
+                                text: "Your Canceled Deletion",
+                                type: "success",
+                                timer: 1000,
+                                showConfirmButton: false
+                            });
+                        }
+                    });
+    }
+    function UnDelete(id) {
+        debugger;
+        swal({
+            title: "Are you  sure?",
+            text: "Un Delete Customer Record",
+            type: "info",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+        },
+         function (isConfirm) {
+             debugger;
+             if(isConfirm){
+                 var url = "@Url.Action("UnDeleteCustomer", "Admin")";
+                 $.post(url, { CustomerID: id }, function (data) {
+                     debugger;
+                     if (data.toLowerCase() == 'true') {
+                         swal({
+                             title: "",
+                             text: "Your record saved to Customer List",
+                             type: "success",
+                         },
+                         function (isConfirm) {
+                             debugger;
+                             if (isConfirm) {
+                                 window.location.reload();
+                             }
+                         });
+
+                     }
+                     else {
+                         debugger;
+                         swal({
+                             title: "",
+                             text: "Your record not saved",
+                             type: "error",
+                             timer: 1000,
+                             showConfirmButton: false
+                         });
+                     }
+                 });
+             }
+         });
+    }
+</script>
+
